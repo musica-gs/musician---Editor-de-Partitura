@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>GURY SUEHTAM - Editor Partitura</title>
+<title>GURY SUEHTAM - Editor Partitura PREMIUM</title>
 <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.5/build/cjs/vexflow.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
@@ -38,7 +38,7 @@ button.finalizar{background:linear-gradient(135deg,var(--gold),#B8941F);color:#0
 .wm-text span{display:block;font-size:5px;color:#666}
 .final-bar{display:none}
 body.final-mode #topBar, body.final-mode #toolBar, body.final-mode #leftPanel{display:none!important}
-body.final-mode.final-bar{display:flex!important;position:fixed;top:0;left:0;right:0;background:var(--black);color:var(--gold);padding:12px 20px;z-index:9999;justify-content:space-between;border-bottom:2px solid var(--gold)}
+body.final-mode #finalBar{display:flex!important;position:fixed;top:0;left:0;right:0;background:var(--black);color:var(--gold);padding:12px 20px;z-index:9999;justify-content:space-between;border-bottom:2px solid var(--gold)}
 body.final-mode #rightPanel{margin-top:60px}
 .loading{position:fixed;inset:0;background:rgba(10,10,10,.92);z-index:10000;display:none;justify-content:center;align-items:center;flex-direction:column;color:var(--gold)}
 .loading.show{display:flex}
@@ -46,16 +46,52 @@ body.final-mode #rightPanel{margin-top:60px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;padding:14px 28px;border-radius:30px;font-weight:900;z-index:10001;display:none}
 .toast.show{display:block}
+/* BLOQUEIO HOTMART */
+#login-block{position:fixed;inset:0;background:#0A0A0A;z-index:20000;display:flex;align-items:center;justify-content:center}
+.login-box{background:#1a1a1a;border:2px solid var(--gold);padding:40px;border-radius:16px;text-align:center;width:90%;max-width:400px}
+.login-box h2{color:var(--gold);margin-bottom:10px}
+.login-box input{width:100%;padding:14px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:white;margin:15px 0;text-align:center;text-transform:uppercase}
+.login-box button{width:100%;padding:14px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:900;cursor:pointer}
 </style>
 </head>
 <body>
+
+<!-- TELA DE BLOQUEIO HOTMART -->
+<div id="login-block">
+  <div class="login-box">
+    <div style="font-size:40px">🎼</div>
+    <h2>GURY SUEHTAM PREMIUM</h2>
+    <p style="color:#aaa;font-size:13px">Digite sua chave enviada pela Hotmart</p>
+    <input id="keyInput" placeholder="MUSICIAN-XXXX">
+    <button onclick="validarChave()">ACESSAR EDITOR</button>
+    <p id="erro" style="color:#ff4444;display:none;margin-top:10px;font-size:13px">Chave inválida</p>
+  </div>
+</div>
+
 <div class="final-bar" id="finalBar"><div class="logo-area"><div class="logo-icon">GS</div><div class="logo-text"><b>GURY SUEHTAM</b><span>GS Partitura - Editor</span></div></div><button class="sec" onclick="voltarEdicao()">← Voltar</button></div>
 <div class="loading" id="loading"><div class="spinner"></div><div style="margin-top:16px;font-weight:800">Gerando imagem A4...</div></div>
 <div class="toast" id="toast">✅ Imagem salva!</div>
 <div class="top" id="topBar"><div class="logo-area"><div class="logo-icon">GS</div><div class="logo-text"><b>GURY SUEHTAM</b><span>GS Partitura - Editor</span></div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button onclick="addStaff()">+ Pauta</button><button class="sec" onclick="removeLast()">- Remover</button><button onclick="addBar()" style="background:var(--gold);color:#000;border:none">| Barra</button><button class="sec" onclick="removeBar()">- Barra</button><button id="beamBtn" class="btn" onclick="toggleBeam()">🔗 ON</button><button class="sec" onclick="clearStaff()">🗑️</button><button class="finalizar" onclick="finalizarESalvar()">✨ FINALIZAR</button></div></div>
-<div class="toolbar" id="toolBar"><b style="font-size:11px">TOM:</b><select id="keySel" onchange="setKey()"><option value="C">0 - Dó</option><option value="G">1# Sol</option><option value="D">2# Ré</option><option value="A">3# Lá</option><option value="E" selected>4# Mi - Sax Alto</option><option value="Bb">2b Sib</option><option value="Eb">3b Mib</option></select><b style="font-size:11px;margin-left:12px">COMPASSO:</b><select id="timeSel" onchange="setTime()"><option value="2/4">2/4</option><option value="3/4">3/4</option><option value="4/4" selected>4/4</option></select><span style="margin-left:auto;font-size:9px;background:var(--black);color:var(--gold);padding:4px 8px;border-radius:4px">GS Editor - Partitura</span></div>
+<div class="toolbar" id="toolBar"><b style="font-size:11px">TOM:</b><select id="keySel" onchange="setKey()"><option value="C">0 - Dó</option><option value="G">1# Sol</option><option value="D">2# Ré</option><option value="A">3# Lá</option><option value="E" selected>4# Mi - Sax Alto</option><option value="Bb">2b Sib</option><option value="Eb">3b Mib</option></select><b style="font-size:11px;margin-left:12px">COMPASSO:</b><select id="timeSel" onchange="setTime()"><option value="2/4">2/4</option><option value="3/4">3/4</option><option value="4/4" selected>4/4</option></select><span style="margin-left:auto;font-size:9px;background:var(--black);color:var(--gold);padding:4px 8px;border-radius:4px">GS Editor PREMIUM</span></div>
 <div class="main"><div class="left" id="leftPanel"><div class="group"><b class="title">DURAÇÃO</b><div id="durs"></div></div><div class="group"><b class="title">PAUSAS</b><div id="rests"></div></div><div class="group"><b class="title">OITAVA</b><div id="octs"></div></div><div class="group"><b class="title">NOTAS - COM BEMÓIS ♭</b><div id="notes" style="max-height:260px;overflow:auto"></div></div></div><div class="right" id="rightPanel"><div class="paper" id="paper"><input id="title" placeholder="Digite o nome da Musica..." style="width:100%;text-align:center;font-size:22px;font-weight:900;border:none;border-bottom:2px solid #000;padding:10px;margin-bottom:25px;background:transparent"><div id="staves"></div><div class="watermark"><div class="wm-icon">GS</div><div class="wm-text">GURY SUEHTAM<span>EDITOR</span></div></div></div></div></div>
+
 <script>
+// --- SISTEMA HOTMART ---
+const CHAVES = ["MUSICIAN47","GURY100","MUSIC2026","GS-PREMIUM"];
+function validarChave(){
+  const k = document.getElementById('keyInput').value.trim().toUpperCase();
+  if(k.length >= 4){ // aceita qualquer chave da Hotmart com mais de 4 digitos
+    localStorage.setItem('gs_premium','true');
+    document.getElementById('login-block').style.display='none';
+  } else {
+    document.getElementById('erro').style.display='block';
+  }
+}
+if(localStorage.getItem('gs_premium')==='true'){
+  document.getElementById('login-block').style.display='none';
+}
+
+// --- SEU EDITOR ORIGINAL (SEM PLANILHA) ---
 const { Renderer, Stave, StaveNote, Voice, Formatter, Accidental, Beam } = Vex.Flow;
 let state={oct:4,key:'E',time:'4/4',clef:'treble',dur:'8',autoBeam:true}; let staves=[]; let selStaff=null;
 const NOTE_MAP=[
@@ -100,8 +136,6 @@ async function finalizarESalvar(){
     const paper=document.getElementById('paper'); const title=document.getElementById('title').value||'partitura';
     const canvas=await html2canvas(paper,{scale:2,backgroundColor:'#fff'});
     const link=document.createElement('a'); link.download=title.replace(/[^a-z0-9]/gi,'_')+'_GURY_SUEHTAM.png'; link.href=canvas.toDataURL('image/png'); link.click();
-    const lead=JSON.parse(localStorage.getItem('gury_lead')||'{}');
-    await fetch('/api/partituras',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo:title,staves, key:state.key, time:state.time, lead})});
     loading.classList.remove('show'); document.getElementById('finalBar').style.display='flex';
     const toast=document.getElementById('toast'); toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2500);
   }catch(e){ loading.classList.remove('show'); document.getElementById('finalBar').style.display='flex'; alert(e.message); }
